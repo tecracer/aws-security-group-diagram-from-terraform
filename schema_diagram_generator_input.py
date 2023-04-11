@@ -46,6 +46,6 @@ def check_input_json_against_schema(data):
 
     try:
         json_schema.validate(data)
-        print("Validation successful!")
+
     except SchemaError as e:
-        print("Validation failed!", e)
+        raise Exception("JSON Validation failed!", e)

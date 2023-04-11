@@ -6,9 +6,10 @@ from schema_diagram_generator_input import check_input_json_against_schema
 GRAPH_ATTR = {
     "splines": "polyline",
     "overlap": "false",
-    "nodesep": "1",
+    "nodesep": "4",
     "ranksep": "2",
-    "rankdir": "TB",
+    "rankdir": "LR",
+    "compound": "true"
 }
 NODE_ATTR = {
     "fontsize": "12",
@@ -17,7 +18,7 @@ EDGE_ATTR = {
     "fontsize": "11",
 }
 
-def generate_security_groups_diagram_diagrams(json_data: dict, output_filename: str = "security_groups_diagram.png"):
+def generate_security_groups_diagram(json_data: dict, output_filename: str = "security_groups_diagram", outformat: str = "png", show: bool = False):
     if not isinstance(json_data, dict):
         raise ValueError("Input should be a dictionary")
 
@@ -30,7 +31,7 @@ def generate_security_groups_diagram_diagrams(json_data: dict, output_filename: 
     ipv4_cidr_nodes = {}
     ipv6_cidr_nodes = {}
 
-    with Diagram("Security Groups Diagram", show=True, filename=output_filename, graph_attr=GRAPH_ATTR, node_attr=NODE_ATTR, edge_attr=EDGE_ATTR) as diagram:
+    with Diagram("Security Groups Diagram", show=show, filename=output_filename, graph_attr=GRAPH_ATTR, node_attr=NODE_ATTR, edge_attr=EDGE_ATTR, outformat=outformat) as diagram:
 
         accounts = extract_unique_account_ids(json_data)
         for account_id in accounts:
@@ -71,7 +72,7 @@ def generate_security_groups_diagram_diagrams(json_data: dict, output_filename: 
             sg_key = sg["id"]
             for rule in sg.get("ingress_rules", []):
 
-                print(rule)
+                #print(rule)
                 
 
               

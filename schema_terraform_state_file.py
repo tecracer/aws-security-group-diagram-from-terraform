@@ -5,10 +5,9 @@ def check_state_file_against_schema(data):
 
     try:
         state_file_dict_schema.validate(data)
-        print("Validation successful!")
     except SchemaError as e:
-        print("Validation failed!", e)
-
+        raise Exception("State File Validation failed!", e)
+        
 
 
 state_file_entry_schema = Schema({
@@ -24,8 +23,8 @@ state_file_aws_ec2_managed_prefix_list_values_schema = Schema({
     "max_entries": int,
     "name": str,
     "owner_id": str,
-    "tags": dict,
-    "tags_all": dict,
+    "tags": Or(None, dict),
+    "tags_all": Or(None, dict),
     "version": int
 })
 
@@ -51,8 +50,8 @@ state_file_aws_security_group_values_schema = Schema({
     "name_prefix": str,
     "owner_id": str,
     "revoke_rules_on_delete": bool,
-    "tags": dict,
-    "tags_all": dict,
+    "tags": Or(None, dict),
+    "tags_all": Or(None, dict),
     Optional("timeouts"): Or(None, dict),
     "vpc_id": str
 })
