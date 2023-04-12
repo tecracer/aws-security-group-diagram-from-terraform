@@ -188,6 +188,6 @@ def process_json(input_json):
 
     check_input_json_against_schema(output)
 
-    print(output)
+    # print(output)
     return output
 

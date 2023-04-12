@@ -28,14 +28,14 @@ if __name__ == "__main__":
 
     # check for flag --output_filename and output file name
     if "--output_filename" in sys.argv:
-        index = sys.argv.index("-o")
+        index = sys.argv.index("--output_filename")
         output_filename = sys.argv[index + 1]
     else:
         output_filename = "diagram"
 
     # check for flag --output_format and output format
     if "--output_format" in sys.argv:
-        index = sys.argv.index("-of")
+        index = sys.argv.index("--output_format")
         output_format = sys.argv[index + 1]
     else:
         output_format = "png"

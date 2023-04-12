@@ -1,6 +1,15 @@
 from schema import Schema, And, Or, Use, SchemaError, Optional
-
+   
 def check_state_file_against_schema(data):
+
+     # Predefined version values
+    allowed_format_versions = ["1.0"]
+     
+    format_version = data.get("format_version")
+    terraform_version = data.get("terraform_version")
+
+    if format_version not in allowed_format_versions:
+        print(f"Warning: format_version '{format_version}' is not tested. Tested: {allowed_format_versions}")
 
 
     try:
@@ -78,7 +87,7 @@ state_file_resource_schema_generic = Schema({
     "provider_name": str,
     "schema_version": int,
     "values": any,
-    "sensitive_values": dict,
+    Optional("sensitive_values"): dict,
     Optional("depends_on"): list
 })
 
@@ -90,7 +99,7 @@ state_file_resource_schema_security_group = Schema({
     "provider_name": str,
     "schema_version": int,
     "values": state_file_aws_security_group_values_schema,
-    "sensitive_values": dict,
+    Optional("sensitive_values"): dict,
     Optional("depends_on"): list
 })
 
@@ -102,7 +111,7 @@ state_file_resource_schema_prefix_list = Schema({
     "provider_name": str,
     "schema_version": int,
     "values": state_file_aws_ec2_managed_prefix_list_values_schema,
-    "sensitive_values": dict,
+    Optional("sensitive_values"): dict,
     Optional("depends_on"): list
 })
 
@@ -115,8 +124,9 @@ state_file_values_schema = Schema({
 })
 
 state_file_dict_schema = Schema({
-    "format_version": And(str, lambda s: s == "1.0"),
+    "format_version": str,
     "terraform_version": str,
     "values": state_file_values_schema
 })
+
 
