@@ -25,6 +25,16 @@ def process_json(input_json):
 
     prefix_lists = {}
     security_groups = {}
+    print("before")
+    print (resources)
+
+    # merge resources in child modules into root module
+    if 'child_modules' in data['values']['root_module']:
+        for child_module in data['values']['root_module']['child_modules']:
+            resources = resources + child_module['resources']
+
+    print("after")
+    print (resources)
 
     # get all prefix lists and security groups
     for resource in resources:

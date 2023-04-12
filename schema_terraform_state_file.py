@@ -115,9 +115,17 @@ state_file_resource_schema_prefix_list = Schema({
     Optional("depends_on"): list
 })
 
-state_file_root_module_schema = Schema({
-    "resources": state_file_validate_resource_values
+state_file_child_modules_schema = Schema({
+    "resources": any ,# lambda resource_values: state_file_validate_resource_values(resource_values), #todo: add validation; there is a bug...
+    "address": str
 })
+
+state_file_root_module_schema = Schema({
+    "resources": lambda resource_values: state_file_validate_resource_values(resource_values),
+    Optional("child_modules"): [state_file_child_modules_schema]
+})
+
+
 
 state_file_values_schema = Schema({
     "root_module": state_file_root_module_schema
