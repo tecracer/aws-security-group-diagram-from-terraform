@@ -74,6 +74,7 @@ def process_json(input_json):
                     "to_port": input_rule['to_port'],
                     "protocol": input_rule['protocol'],
                     "source_security_group_ids": extracted_security_group_ids,
+                    "source_security_group_ids_raw": input_rule['security_groups'],
                     "cidr_blocks": input_rule['cidr_blocks'],
                     "ipv6_cidr_blocks": input_rule['ipv6_cidr_blocks'],
                     "prefix_list_ids": input_rule['prefix_list_ids']
@@ -132,13 +133,61 @@ def process_json(input_json):
                     "not_defined_in_state": True
                 })
 
+        # add unknown security groups to security group list
+        for security_group_id in rule['source_security_group_ids']:
+            #print(rule)
+            if not any(security_group['id'] == security_group_id for security_group in output['security_groups']):
+              #  print("security group " + security_group_id + " not found")
+                parent_sg_id = rule['security_group_id']
+                sg_id = security_group_id
+                
+                # get account id from parent
+                for security_group in output['security_groups']:
+                    if security_group['id'] == parent_sg_id:
+                        account_id = security_group['account_id']
+                        break
 
+                # get raw security group id from rule
+                for raw_sg_id in rule['source_security_group_ids_raw']:
+                    if security_group_id in raw_sg_id:
+                        sg_id_raw = raw_sg_id
+                        break
+
+                if '/' in sg_id_raw:
+                        print("splitting")
+                        sg_id = sg_id_raw.split('/')[-1]
+                        account_id = sg_id_raw.split('/')[0]
+                        print("new sg id: " + sg_id)
+                        print("new account id: " + account_id)
+
+             
+                
+                
+                output['security_groups'].append({
+                    "id": sg_id,
+                    "name": sg_id,
+                    "account_id": account_id,
+                    "ingress_rules": [],
+                    "egress_rules": [],
+                    "not_defined_in_state": True
+                })
+
+    
      # Remove duplicates from cidr_blocks and ipv6_cidr_blocks lists
     output['cidr_blocks'] = list(set(output['cidr_blocks']))
     output['ipv6_cidr_blocks'] = list(set(output['ipv6_cidr_blocks']))
 
 
+    # remove all raw security group ids from all rules
+    for security_group in output['security_groups']:
+        for ingress_rule in security_group['ingress_rules']:
+            ingress_rule.pop('source_security_group_ids_raw', None)
+        for egress_rule in security_group['egress_rules']:
+            egress_rule.pop('source_security_group_ids_raw', None)
+
+
     check_input_json_against_schema(output)
 
+    print(output)
     return output
 

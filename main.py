@@ -26,15 +26,15 @@ if __name__ == "__main__":
     else:
         print("No input flag specified. Use -f or -i flags.")
 
-    # check for flag -o and output file name
-    if "-o" in sys.argv:
+    # check for flag --output_filename and output file name
+    if "--output_filename" in sys.argv:
         index = sys.argv.index("-o")
         output_filename = sys.argv[index + 1]
     else:
         output_filename = "diagram"
 
-    # check for flag -of and output format
-    if "-of" in sys.argv:
+    # check for flag --output_format and output format
+    if "--output_format" in sys.argv:
         index = sys.argv.index("-of")
         output_format = sys.argv[index + 1]
     else:

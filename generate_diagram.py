@@ -33,25 +33,39 @@ def generate_security_groups_diagram(json_data: dict, output_filename: str = "se
 
     with Diagram("Security Groups Diagram", show=show, filename=output_filename, graph_attr=GRAPH_ATTR, node_attr=NODE_ATTR, edge_attr=EDGE_ATTR, outformat=outformat) as diagram:
 
+
         accounts = extract_unique_account_ids(json_data)
         for account_id in accounts:
-            with Cluster(f"Account {account_id}"):
-                sgs = extract_security_groups_for_account(json_data, account_id)
-                pls = extract_prefix_lists_for_account(json_data, account_id)
+            if account_id is not None:
+                with Cluster(f"Account {account_id}"):
+                    sgs = extract_security_groups_for_account(json_data, account_id)
+                    pls = extract_prefix_lists_for_account(json_data, account_id)
 
-                with Cluster(f"Security Groups"):
-                    for sg in sgs:
-                        sg_key = sg["id"]
-                        sg_nodes[sg_key] = VPC(f'{sg["name"]} ({sg["id"]})')
+                    with Cluster(f"Security Groups"):
+                        for sg in sgs:
+                            # if defined in state
+                            #print(sg)
+                            if sg.get("not_defined_in_state") is False:
+                                sg_key = sg["id"]
+                                sg_nodes[sg_key] = VPC(f'{sg["name"]} ({sg["id"]})')
+                            else:
+                                sg_key = sg["id"]
+                                sg_nodes[sg_key] = VPC(f'not in state: {sg["id"]}')
 
 
-                with Cluster(f"Prefix Lists"):
-                    for pl in pls:
-                        pl_key = pl["id"]
-                        pl_nodes[pl_key] = VPCPeering(f'{pl["name"]} ({pl["id"]})')
+                    with Cluster(f"Prefix Lists"):
+                        for pl in pls:
+                            pl_key = pl["id"]
+                            pl_nodes[pl_key] = VPCPeering(f'{pl["name"]} ({pl["id"]})')
+            
+
 
         ipv4_cidrs = extract_all_ipv4_cidrs(json_data)
         ipv6_cidrs = extract_all_ipv6_cidrs(json_data)
+        #print(json_data.get("security_groups", []))
+
+       
+
 
         with Cluster(f"IPv4 CIDR Ranges"):
 
@@ -134,4 +148,3 @@ def extract_all_ipv6_cidrs(data: dict) -> list:
                 for ipv6_cidr_block in ipv6_cidr_blocks:
                     ipv6_cidrs.add(ipv6_cidr_block)
     return list(ipv6_cidrs)
-

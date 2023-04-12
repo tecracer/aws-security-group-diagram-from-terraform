@@ -36,4 +36,4 @@ I recommend running `terraform refresh` before accessing the state file if you u
 
 
 
-The script will then process the input data, extract security groups and their rules, and generate a visual diagram in PNG format. The default file name for the output diagram is `diagram.png`. It can be changed with the `-o`flag accompanied by a file name. Use `-of` flag to change output format. Use the `--show`flag to directly open the result.
+The script will then process the input data, extract security groups and their rules, and generate a visual diagram in PNG format. The default file name for the output diagram is `diagram.png`. It can be changed with the `--output_filename`flag accompanied by a file name. Use `--output_format` flag to change output format. Use the `--show`flag to directly open the result.
