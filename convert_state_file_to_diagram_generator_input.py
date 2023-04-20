@@ -37,6 +37,11 @@ def process_json(input_json):
     # get all prefix lists and security groups
     for resource in resources:
         if resource['type'] == 'aws_ec2_managed_prefix_list':
+
+            # check if index is set; if so, adjust name
+            if resource['index'] is not None:
+                resource['name'] = f"{resource['name']}.{resource['index']}"    
+
             prefix_lists[resource['name']] = {
                 "id": resource['values']['id'],
                 "name": resource['values']['name'],
@@ -46,6 +51,11 @@ def process_json(input_json):
             }
 
         elif resource['type'] == 'aws_security_group':
+
+            # check if index is set; if so, adjust name
+            if resource['index'] is not None:
+                resource['name'] = f"{resource['name']}.{resource['index']}"
+
             security_groups[resource['name']] = {
                 "id": resource['values']['id'],
                 "name": resource['values']['name'],
@@ -148,7 +158,6 @@ def process_json(input_json):
               #  print("security group " + security_group_id + " not found")
                 parent_sg_id = rule['security_group_id']
                 sg_id = security_group_id
-                
                 # get account id from parent
                 for security_group in output['security_groups']:
                     if security_group['id'] == parent_sg_id:
@@ -192,7 +201,6 @@ def process_json(input_json):
 
 
     check_input_json_against_schema(output)
-
-    # print(output)
+ 
     return output
 
