@@ -53,7 +53,7 @@ def process_json(input_json):
         elif resource['type'] == 'aws_security_group':
 
             # check if index is set; if so, adjust name
-            if resource['index'] is not None:
+            if 'index' in resource and resource['index'] is not None:
                 resource['name'] = f"{resource['name']}.{resource['index']}"
 
             security_groups[resource['name']] = {
@@ -65,15 +65,13 @@ def process_json(input_json):
                 "not_defined_in_state": False
             }
 
-
+    print(resources)
     # loop through security groups and add rules
     security_group_rules = {}
     for resource in resources:
         if resource['type'] == 'aws_security_group':
 
             def process_rules(rule_type, input_rule):
-
-                
 
                 extracted_security_group_ids = []
                 for sg_id in input_rule['security_groups']:
@@ -199,7 +197,7 @@ def process_json(input_json):
         for egress_rule in security_group['egress_rules']:
             egress_rule.pop('source_security_group_ids_raw', None)
 
-
+   # print(output)
     check_input_json_against_schema(output)
  
     return output
